@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
 
 from database import connection
 
@@ -10,6 +9,3 @@ class User(connection.Base):
 	username = Column(String, index=True)
 	password = Column(String, index=True)
 	email = Column(String, index=True, unique=True)
-
-	# Relationships
-	# notes = relationship('Note', back_populates='writer')
