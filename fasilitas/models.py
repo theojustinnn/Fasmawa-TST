@@ -11,15 +11,9 @@ class Fasilitas(connection.Base):
     __tablename__ = 'fasilitas'
 
     id = Column(Integer, primary_key=True, index=True)
-    nama = Column(String, index=True)
+    nama = Column(String, ForeignKey('listfasilitas.nama'), index=True)
     lokasi = Column(String, ForeignKey('lokasi.nama'), index=True)
     hari = Column(String)
-    jam = Column(String)
+    waktu = Column(String)
     pengguna = Column(String)
     jumlah = Column(Integer)
-
-	# Foreign key
-    # user_id = Column(Integer, ForeignKey('users.id'))
-
-	# Relationships
-    # writer = relationship('User', back_populates='notes')
