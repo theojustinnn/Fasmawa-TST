@@ -10,6 +10,11 @@ from listfasilitas import models as lfasmodels
 # Create data penggunaan fasilitas baru
 async def create_fasilitas(fasilitas: schemas.CreateFasilitas, db:Session) -> schemas.GetFasilitas:
 	new_fasilitas = models.Fasilitas(**fasilitas.dict())
+	cek_fasilitas = db.query(lfasmodels.ListFasilitas.nama).filter(lfasmodels.ListFasilitas.nama == new_fasilitas.nama).all()
+
+	print(cek_fasilitas)
+	if cek_fasilitas == []:
+		raise HTTPException(status_code=400, detail='Fasilitas invalid')
 	db.add(new_fasilitas)
 	db.commit()
 
@@ -18,6 +23,11 @@ async def create_fasilitas(fasilitas: schemas.CreateFasilitas, db:Session) -> sc
 
 # Update data penggunaan fasilitas
 async def update_fasilitas(nama: str, hari: str, waktu: str, pengguna: str, db:Session) -> schemas.GetFasilitas:
+	cek_fasilitas = db.query(models.Fasilitas.nama).\
+		filter(models.Fasilitas.nama == nama, models.Fasilitas.hari == hari, models.Fasilitas.pengguna == pengguna).\
+			all()
+	if cek_fasilitas == []:
+		raise HTTPException(status_code=400, detail='Fasilitas invalid')
 	updated_fasilitas = db.query(models.Fasilitas).\
 		filter(models.Fasilitas.nama == nama, models.Fasilitas.hari == hari, models.Fasilitas.pengguna == pengguna).\
 			update({models.Fasilitas.waktu: waktu})
@@ -26,6 +36,11 @@ async def update_fasilitas(nama: str, hari: str, waktu: str, pengguna: str, db:S
 
 # Delete data penggunaan fasilitas
 async def delete_fasilitas(nama: str, hari: str, waktu: str, pengguna: str, db:Session) -> schemas.GetFasilitas:
+	cek_fasilitas = db.query(models.Fasilitas.nama).\
+		filter(models.Fasilitas.nama == nama, models.Fasilitas.hari == hari, models.Fasilitas.waktu == waktu, models.Fasilitas.pengguna == pengguna).\
+			all()
+	if cek_fasilitas == []:
+		raise HTTPException(status_code=400, detail='Fasilitas invalid')
 	deleted_fasilitas = db.query(models.Fasilitas).\
 		filter(models.Fasilitas.nama == nama, models.Fasilitas.hari == hari, models.Fasilitas.pengguna == pengguna, models.Fasilitas.waktu == waktu).\
 			delete(synchronize_session=False)
@@ -35,7 +50,7 @@ async def delete_fasilitas(nama: str, hari: str, waktu: str, pengguna: str, db:S
 # Get semua penggunaan fasilitas
 async def get_all_fasilitas(db: Session) -> List[schemas.GetFasilitas]:
 	fasilitas = db.query(models.Fasilitas).\
-		order_by(models.Fasilitas.hari).\
+		order_by(models.Fasilitas.hari.desc()).\
 			all()
 	if fasilitas is None:
 		return {"Details" : "Tidak ada penggunaan fasilitas saat ini"}
@@ -43,13 +58,19 @@ async def get_all_fasilitas(db: Session) -> List[schemas.GetFasilitas]:
 
 # Get penggunaan fasilitas berdasarkan lokasi
 async def get_lokasi_fasilitas(lokasi: str, db: Session) -> List[schemas.GetFasilitas]:
-	fasilitas = db.query(models.Fasilitas).filter(models.Fasilitas.lokasi == lokasi)
+	fasilitas = db.query(models.Fasilitas).filter(models.Fasilitas.lokasi == lokasi).all()
+	print(fasilitas)
 	if fasilitas is None:
 		return {"Details" : "Tidak ada penggunaan fasilitas pada lokasi ini"}
 	return list(map(schemas.GetFasilitas.from_orm, fasilitas))
 
 # Get keramaian lokasi
 async def get_keramaian(lokasi: str, hari: str, waktu: str, db: Session):
+	cek_fasilitas = db.query(models.Fasilitas.nama).\
+		filter(lokmodels.Lokasi.nama == lokasi).\
+			all()
+	if cek_fasilitas == []:
+		raise HTTPException(status_code=400, detail='Lokasi invalid')
 	jumlah = db.query(func.sum(models.Fasilitas.jumlah)).\
 		where(models.Fasilitas.lokasi == lokasi, models.Fasilitas.hari == hari, models.Fasilitas.waktu == waktu).\
 			all()
@@ -63,6 +84,11 @@ async def get_keramaian(lokasi: str, hari: str, waktu: str, db: Session):
 
 # Get keramaian lokasi berdasarkan fasilitas
 async def get_keramaian_fasilitas(nama: str, hari: str, waktu: str, db: Session):
+	cek_fasilitas = db.query(models.Fasilitas.nama).\
+		filter(lfasmodels.ListFasilitas.nama == nama).\
+			all()
+	if cek_fasilitas == []:
+		raise HTTPException(status_code=400, detail='Fasilitas invalid')
 	lokasi = db.query(models.Fasilitas.lokasi).\
 		where(models.Fasilitas.nama == nama).\
 			all()
