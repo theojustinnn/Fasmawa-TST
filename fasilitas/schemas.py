@@ -1,50 +1,24 @@
-
 from pydantic import BaseModel
-# from datetime import datetime
 
-
+# Skema utama
 class Fasilitas(BaseModel):
 	nama : str
 	lokasi : str
 	hari : str
-	jam : str
+	waktu : str
 	pengguna : str
 	jumlah : int
 
-# Get all attributes
-class BaseFasilitas(Fasilitas):
-	id : int
-	nama : str
-	lokasi : str
-	hari : str
-	jam : str
-	pengguna : str
-	jumlah : int
-
-	class Config:
-		orm_mode = True
-
-# Create note schema
+# Skema untuk create
 class CreateFasilitas(Fasilitas):
-	nama : str
-	lokasi : str
-	hari : str
-	jam : str
-	pengguna : str
-	jumlah : int
+	pass
 
 	class Config:
 		orm_mode = True
 
-# Get Note schema
+# Skema untuk get
 class GetFasilitas(Fasilitas):
 	id : int
-	nama : str
-	lokasi : str
-	hari : str
-	jam : str
-	pengguna : str
-	jumlah : int
 
 	class Config:
 		orm_mode = True
