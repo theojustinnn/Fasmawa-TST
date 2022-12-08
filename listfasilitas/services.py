@@ -1,6 +1,6 @@
 from typing import List
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
-# from auth.services import Hash
 
 from . import models, schemas
 
@@ -15,7 +15,12 @@ async def create_list_fasilitas(listfasilitas: schemas.CreateListFasilitas, db:S
 
 # Delete fasilitas
 async def delete_list_fasilitas(nama: str, db:Session) -> schemas.GetListFasilitas:
-	deleted_fasilitas = db.query(models.Fasilitas).\
+	cek_fasilitas = db.query(models.ListFasilitas.nama).\
+		filter(models.ListFasilitas.nama == nama).\
+			all()
+	if cek_fasilitas == []:
+		raise HTTPException(status_code=400, detail='Fasilitas invalid')
+	deleted_fasilitas = db.query(models.ListFasilitas).\
 		filter(models.ListFasilitas.nama == nama).\
 			delete(synchronize_session=False)
 	db.commit()
