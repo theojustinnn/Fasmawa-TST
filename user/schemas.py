@@ -1,13 +1,12 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-
+# Skema utama
 class User(BaseModel):
 	username:str
 	password:str
 	email:str
 
-# Get all attributes
 class BaseUser(User):
 	id:int
 	date_created:datetime
@@ -15,14 +14,14 @@ class BaseUser(User):
 	class Config:
 		orm_mode = True
 
-# Create user
+# Skema untuk create
 class CreateUser(User):
 	pass
 
 	class Config:
 		orm_mode = True
 
-# Get user
+# Skema untuk get
 class GetUser(BaseModel):
 	username:str
 	email:str
