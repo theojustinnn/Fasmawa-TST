@@ -11,7 +11,7 @@ router = APIRouter(
 	tags=['ListFasilitas']
 )
 
-# Inisialisasi database user
+# Inisialisasi database list fasilitas
 models.connection.Base.metadata.create_all(bind=connection.engine)
 
 # Create fasilitas baru
