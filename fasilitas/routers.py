@@ -36,10 +36,10 @@ async def get_semua_penggunaan_fasilitas(db:Session=Depends(connection.get_db)):
 
 # Get penggunaan fasilitas berdasarkan lokasi
 @router.get("/{lokasi}", response_model=List[schemas.Fasilitas])
-async def get_penggunaan_fasilitas_berdasarkan_lokasi(lokasi: str, db:Session=Depends(connection.get_db)):
+async def get_penggunaan_fasilitas_berdasarkan_lokasi(lokasi: str, db:Session=Depends(connection.get_db), authenticated_user: AuthSchemas.AuthenticatedUser=Depends(AuthServices.get_current_user)):
 	return await services.get_lokasi_fasilitas(lokasi=lokasi, db=db)
 
 # Get rekomendasi fasilitas berdasarkan jumlah pengguna
-@router.get("/rekomendasi")
-async def get_rekomendasi_fasilitas(jumlah: int, hari: str, waktu: str, db:Session=Depends(connection.get_db)):
+@router.get("/rekomendasi/{jumlah}")
+async def get_rekomendasi_fasilitas(jumlah: int, hari: str, waktu: str, db:Session=Depends(connection.get_db), authenticated_user: AuthSchemas.AuthenticatedUser=Depends(AuthServices.get_current_user)):
 	return await services.get_rekomendasi(jumlah=jumlah, hari=hari, waktu=waktu, db=db)
