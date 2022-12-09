@@ -3,6 +3,9 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
+import requests
+import json
+
 from . import models, schemas
 from lokasi import models as lokmodels
 from listfasilitas import models as lfasmodels
@@ -108,6 +111,10 @@ async def get_rekomendasi(jumlah: int, hari:str, waktu:str, db: Session):
 			order_by(func.sum(models.Fasilitas.jumlah)).\
 			all()
 	
+	get_kantin_url = f"http://kantin-itb-tst.azurewebsites.net/list_kantin/list_kantin"
+	get_kantin_response = requests.get(get_kantin_url)
+	kantin = (json.loads(get_kantin_response.content.decode('utf-8')))
+	
 	i = 0
 	while i < len(fasilitas):
 		jumlahbaru = fasilitas[i][0] + jumlah
@@ -121,9 +128,15 @@ async def get_rekomendasi(jumlah: int, hari:str, waktu:str, db: Session):
 			j = 0
 			while j < len(listfasilitas):
 				if (listfasilitas[j][0] != fasilitas[i][1]):
-					return {"Rekomendasi Fasilitas" : listfasilitas[j][0]}
+					return {
+						"Rekomendasi Fasilitas" : listfasilitas[j][0],
+						"Daftar Kantin Tersedia" : kantin
+					}
 				j+=1
-			return {"Rekomendasi Fasilitas" : fasilitas[i-1][1]}
+			return {
+				"Rekomendasi Fasilitas" : fasilitas[i-1][1],
+				"Daftar Kantin Tersedia" : kantin
+			}
 		i+=1
 	
 	fasilitaslain = db.query(lfasmodels.ListFasilitas.nama).\
@@ -134,7 +147,10 @@ async def get_rekomendasi(jumlah: int, hari:str, waktu:str, db: Session):
 	while k < len(fasilitaslain):
 		while l < len(fasilitas):
 			if (fasilitaslain[k][0] != fasilitas[l][1]):
-				return {"Rekomendasi Fasilitas" : fasilitaslain[k][0]}
+				return {
+					"Rekomendasi Fasilitas" : fasilitaslain[k][0],
+					"Daftar Kantin Tersedia" : kantin
+				}
 			l+=1
 		k+=1
 
