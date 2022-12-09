@@ -2,7 +2,6 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import connection
-# from auth import schemas as AuthSchemas, services as AuthServices
 
 from . import services, schemas, models
 from fasilitas import models as fasmod
@@ -13,7 +12,7 @@ router = APIRouter(
 	tags=['Lokasi']
 )
 
-# Initialize tables
+# Inisialisasi database lokasi
 models.connection.Base.metadata.create_all(bind=connection.engine)
 
 # Get semua lokasi
