@@ -13,7 +13,6 @@ from jose import JWTError, jwt
 
 from . import schemas, models
 
-# Secret key yang didapatkan dari command openssl rand -hex 32
 SECRET_KEY = '6e3337f8a63d454372e71a2cf9818f6ee6479667359c3935d1db58141093eb2d'
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -44,8 +43,6 @@ def login(db:Session, request:OAuth2PasswordRequestForm):
 	if not Hash.verify(request.password, user.password):
 		raise HTTPException(status_code=401, detail='Incorrect password')
 	
-	# return user
-	# Instead of returning the user data, this function will return the JWT token
 	access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 	access_token = create_access_token(
 		data={"sub": user.username}, expires_delta=access_token_expires
@@ -74,13 +71,13 @@ async def get_current_user(token:str=Depends(oauth2_scheme), db:Session=Depends(
 	# Verifikasi token
 	try:
 		payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-		email:str = payload.get("sub")
-		if email == None:
+		username:str = payload.get("sub")
+		if username == None:
 			raise credentials_exception
-		token_data = schemas.TokenData(username=email)
+		token_data = schemas.TokenData(username=username)
 	except JWTError:
 		raise credentials_exception
 
 	# Return user
-	user = db.query(UserModels.User).filter(UserModels.User.email==email).first()
+	user = db.query(UserModels.User).filter(UserModels.User.username==username).first()
 	return user
