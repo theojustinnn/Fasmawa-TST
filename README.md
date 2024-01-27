@@ -1,5 +1,5 @@
 # Fasilitas Kemahasiswaan ITB - TST
-This repository is made for the final project of Integrated System Technology
+This repository was made for the final project of Integrated System Technology
 
 The access to API is through here https://fasmawa-itb-tst.azurewebsites.net/ 
 
