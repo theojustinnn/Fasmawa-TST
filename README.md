@@ -14,3 +14,5 @@ This repository consists of these files and folders <br />
 8. datafasilitas.db <br /> -> Database file using SQLite <br />
 9. main.py    <br />     -> Main file to run <br />
 10. requirements.txt  <br /> -> List of requirements needed to be installed <br />
+
+Created by: Theodore Justin Lionar
